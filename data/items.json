@@ -1,0 +1,162 @@
+[
+    {
+        "type": "base",
+        "item": "water",
+        "amount": "per_day"
+    },
+    {
+        "type": "base",
+        "item": "food",
+        "amount": "per_day"
+    },
+    {
+        "type": "snow",
+        "item": "shovel",
+        "amount": "per_household"
+    },
+    {
+        "type": "heat",
+        "item": "sunblock",
+        "amount": "per_person"
+    },
+    {
+        "type": "snow",
+        "item": "tire chains",
+        "amount": "per_household"
+    },
+    {
+        "type": "heat",
+        "item": "additional water",
+        "amount": "per_day"
+    },
+    {
+        "type": "base",
+        "item": "mosquito repellant",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "flashlight",
+        "amount": "per_household"
+    },
+    {
+        "type": "base",
+        "item": "batteries",
+        "amount": "per_household"
+    },
+    {
+        "type": "base",
+        "item": "radio",
+        "amount": "per_household"
+    },
+    {
+        "type": "base",
+        "item": "first aid kit",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "personal hygiene items",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "multi-purpose tool",
+        "amount": "per_person"
+    },
+    {
+        "type": "medication",
+        "item": "medication",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "cell-phones/chargers",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "cash",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "emergency blankets",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "whistle",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "matches/lighters",
+        "amount": "per_person"
+    },
+    {
+        "type": "base",
+        "item": "propane stove",
+        "amount": "per_household"
+    },
+    {
+        "type": "heat",
+        "item": "Light, loose clothing",
+        "amount": "per_person"
+    },
+    {
+        "type": "heat",
+        "item": "Light meals",
+        "amount": "per_person"
+    },
+    {
+        "type": "heat",
+        "item": "hat",
+        "amount": "per_person"
+    },
+    {
+        "type": "snow",
+        "item": "gloves",
+        "amount": "per_person"
+    },
+    {
+        "type": "snow",
+        "item": "thermals",
+        "amount": "per_person"
+    },
+    {
+        "type": "snow",
+        "item": "extra layers",
+        "amount": "per_person"
+    },
+    {
+        "type": "extra",
+        "item": "tarp",
+        "amount": "per_household"
+    },
+    {
+        "type": "extra",
+        "item": "hatchet",
+        "amount": "per_household"
+    },
+    {
+        "type": "extra",
+        "item": "water purification",
+        "amount": "per_person"
+    },
+    {
+        "type": "extra",
+        "item": "camp shovel",
+        "amount": "per_person"
+    },
+    {
+        "type": "pets",
+        "item": "pet food",
+        "amount": "per_day"
+    },
+    {
+        "type": "pets",
+        "item": "extra water",
+        "amount": "per_day"
+    }
+]
