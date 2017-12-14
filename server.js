@@ -13,6 +13,9 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 const conString = 'postgres://postgres:perezed11@localhost:5432/kitlist';
+// const conString = 'postgres://postgres:jenny@localhost:5432/items';
+// const conString = 'postgres://@localhost:5432/kitlist';
+// const conString = 'postgres://@localhost:5432/items';
 
 const client = new pg.Client(process.env.DATABASE_URL || conString);
 client.connect();
