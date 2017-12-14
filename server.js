@@ -12,15 +12,19 @@ app.use(express.static('/'));
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
-const conString = 'postgres://postgres:perezed11@localhost:5432/items';
+const conString = 'postgres://postgres:perezed11@localhost:5432/kitlist';
 
 const client = new pg.Client(process.env.DATABASE_URL || conString);
 client.connect();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-app.get('/api/v1/items', (req, res) => {
+app.get('/api/v1/kitlist', (req, res) => {
     client.query(`SELECT * FROM items;`)
         .then(data => res.send(data.rows));
         console.log('test');
+});
+
+app.listen(PORT, () => {
+    console.log(`Server starter on Port ${PORT}`);
 });
