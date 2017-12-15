@@ -1,36 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "kit-list",
-  "version": "1.0.0",
-  "description": "emergency preparedness checklist",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/acl-flourine/kit-list-server.git"
-  },
-  "author": "flourine",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/acl-flourine/kit-list-server/issues"
-  },
-  "homepage": "https://github.com/acl-flourine/kit-list-server#readme",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "cors": "^2.8.4",
-    "dotenv": "^4.0.0",
-    "express": "^4.16.2",
-    "node": "^9.2.0",
-    "nodemon": "^1.12.7",
-    "pg": "^7.4.0",
-    "superagent": "^3.8.2"
-  },
-  "devDependencies": {}
-}
-=======
     "name": "kit-list",
     "version": "1.0.0",
     "description": "emergency preparedness checklist",
@@ -60,4 +28,3 @@
     },
     "devDependencies": {}
 }
->>>>>>> f3018aaa5455627e51dfbd6fae6dcf3dbde67a51
