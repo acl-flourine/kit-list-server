@@ -1,6 +1,6 @@
-CREATE TABLE IF NOT EXISTS items (item_id SERIAL PRIMARY KEY, listType VARCHAR(55), item VARCHAR (255),amount VARCHAR (55));
+CREATE TABLE items (item_id SERIAL PRIMARY KEY, listType VARCHAR(55), item VARCHAR (55),amount VARCHAR (55));
 
-CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, household INTEGER, heat BOOLEAN, snow BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
+CREATE TABLE users (user_id SERIAL PRIMARY KEY, household INTEGER, heat BOOLEAN, snow BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
 
 
 
