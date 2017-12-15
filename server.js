@@ -11,13 +11,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('/'));
 app.use(cors());
 
-const PORT = process.env.PORT || 3000;
-const conString = 'postgres://postgres:perezed11@localhost:5432/kitlist';
-// const conString = 'postgres://postgres:jenny@localhost:5432/items';
-// const conString = 'postgres://@localhost:5432/kitlist';
-// const conString = 'postgres://@localhost:5432/items';
+const PORT = process.env.PORT;
 
-const client = new pg.Client(process.env.DATABASE_URL || conString);
+const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +24,19 @@ app.get('/api/v1/kitlist', (req, res) => {
         console.log('test');
 });
 
+// *******************REFERENCE THIS FOR JOIN TABLE**********************************
+// app.get('/articles', (request, response) => {
+//     client.query(`
+//     SELECT * FROM articles
+//     INNER JOIN authors
+//       ON articles.author_id=authors.author_id;`
+//     )
+//         .then(result => response.send(result.rows))
+//         .catch(console.error);
+// });
+
+
 app.listen(PORT, () => {
     console.log(`Server starter on Port ${PORT}`);
 });
+
