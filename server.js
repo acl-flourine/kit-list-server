@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-'use strict';
-=======
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -34,4 +31,3 @@ app.get('/api/v1/kitlist', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server starter on Port ${PORT}`);
 });
->>>>>>> f3018aaa5455627e51dfbd6fae6dcf3dbde67a51
