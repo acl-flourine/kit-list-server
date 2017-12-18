@@ -28,7 +28,8 @@ app.get('/monkeys', (req, res) => {
     res.send('got moneky')
 })
 
-app.post('/api/v1', (req, res) => {
+app.post('/api/v1/kitlist', (req, res) => {
+    console.log(req.body.types)
     console.log(req.body.days);
     client.query(
         `INSERT INTO
