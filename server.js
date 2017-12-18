@@ -49,6 +49,19 @@ app.post('/api/v1/kitlist', (req, res) => {
     )
 });
 
+app.post('/api/v1/kitlist', (req, res) => {
+    const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets'];
+   
+    itemTypes.forEach(function(ele) {
+    if (client.query (`SELECT ${ele} FROM users WHERE users.user_id = $1;`)) { // add array request.body something; to access user id
+            const itemIds = client.query(`SELECT item_id FROM items WHERE listType=${ele};`);
+            itemIds.forEach(function(element) {
+                client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES ($1, ${element});`);
+            })  
+        }
+    )
+    })
+});
 // *******************REFERENCE THIS FOR JOIN TABLE**********************************
 // app.get('/articles', (request, response) => {
 //     client.query(`
