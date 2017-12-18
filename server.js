@@ -21,15 +21,15 @@ client.connect();
 app.get('/api/v1/kitlist', (req, res) => {
     client.query(`SELECT * FROM items;`)
         .then(data => res.send(data.rows));
-        console.log('test');
+    console.log('test');
 });
 
 app.get('/monkeys', (req, res) => {
     res.send('got moneky')
 })
 
-app.post('/api/v1/kitlist', (req, res) => {
-    console.log(req.body.types)
+app.post('/api/v1/user', (req, res) => {
+    console.log(req.body.types);
     console.log(req.body.days);
     client.query(
         `INSERT INTO
@@ -46,21 +46,33 @@ app.post('/api/v1/kitlist', (req, res) => {
             req.body.types.includes('meds'),
             req.body.types.includes('pets')
         ]
-    )
+    );
 });
 
-app.post('/api/v1/kitlist', (req, res) => {
+app.post('/api/v1/kitlist/:user_id', (req, res) => {
     const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets'];
-   
+    console.log(req.params);
+    let itemIds = null;
+
     itemTypes.forEach(function(ele) {
-    if (client.query (`SELECT ${ele} FROM users WHERE users.user_id = $1;`)) { // add array request.body something; to access user id
-            const itemIds = client.query(`SELECT item_id FROM items WHERE listType=${ele};`);
-            itemIds.forEach(function(element) {
-                client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES ($1, ${element});`);
-            })  
+        const queryString = `SELECT ${ele} FROM users WHERE users.user_id = ${req.params.user_id};`;
+        console.log(queryString);
+        console.log(typeof ele);
+        if (client.query (queryString)) { // add array request.body something; to access user id
+            console.log('we got');
+            client.query(`SELECT item_id FROM items WHERE listType=${ele};`)
+                .then(got => {
+                    console.log('++++++++++++++++====++we have: ' + got);
+                    itemIds = got;
+                    itemIds.forEach(function(element) {
+                        client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES (${req.params.user_id}, ${element});`);
+                        console.log(element);
+                    });
+                }).catch(err => console.log(err));
+
         }
-    )
-    })
+    });
+    res.status(200).send('Success' + 'username=' + req.params);
 });
 // *******************REFERENCE THIS FOR JOIN TABLE**********************************
 // app.get('/articles', (request, response) => {
