@@ -60,7 +60,7 @@ app.post('/api/v1/kitlist', (req, res) => {
         });
 });
 
-app.get('/api/v1/kitlist/:user_id', (req, res) => { // this should be used to get items for a new user OR and existing user, corresponds to Item.fetchAll
+app.get('/api/v1/kitlist/:user_id', (req, res) => {
     client.query(`SELECT items.item, items.amount, items_by_user.added_on
         FROM items
         INNER JOIN items_by_user ON items.item_id = items_by_user.item_id
@@ -72,9 +72,9 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => { // this should be used to ge
         .catch(console.error);
 });
 
-// the following is probably not necessary - use the above for both new and existing users. BUT we do need to get the user_id that corresponds to the username inputted
-app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
-    client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
+
+app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
+    client.query(`SELECT * FROM users WHERE name = $1;`,            [req.params.name])
         .then(data => {
             res.send(data.rows); // <<< decide where to put data
         });
