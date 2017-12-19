@@ -18,14 +18,14 @@ client.connect();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-app.get('/api/v1/kitlist', (req, res) => {
-    client.query(`SELECT * FROM items;`)
-        .then(data => res.send(data.rows));
-    console.log('test');
-});
+// app.get('/api/v1/kitlist', (req, res) => {
+//     client.query(`SELECT * FROM items;`)
+//         .then(data => res.send(data.rows));
+//     console.log('test');
+// });
 
 
-app.post('/api/v1/user', (req, res) => {
+app.post('/api/v1/kitlist', (req, res) => {
     console.log(req.body.types);
     console.log(req.body.days);
     client.query(
@@ -78,6 +78,12 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
             res.send(data.rows);
             console.log(data);})
         .catch(console.error);
+});
+app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
+    client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
+        .then(data => {
+            res.send(data.rows); // <<< decide where to put data
+        });
 });
 
 
