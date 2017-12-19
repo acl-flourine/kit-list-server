@@ -89,3 +89,26 @@ app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info
 app.listen(PORT, () => {
     console.log(`Server starter on Port ${PORT}`);
 });
+
+// Steps for adding the API 
+// 1. Put HTML element on page
+// 2. Call  API (server.js), should be inside a named function
+// 3. With data from API, populate HTML element (using Handlebars)
+// 4. Make a template for handlebars to use (index.html)
+// 5. Usage of data will be done asynchronously 
+
+
+// Define this as a named function and call in document ready
+function api ()
+
+jQuery(document).ready(function($) {
+    $.ajax({
+        url : "http://api.wunderground.com/api/42fefcef196f9253/conditions/q/OR/Portland.json",
+        dataType : "jsonp",
+        success : function(parsed_json) {
+            var location = parsed_json['location']['city'];
+            var temp_f = parsed_json['current_observation']['temp_f'];
+            alert("Current temperature in " + location + " is: " + temp_f);
+        }
+    });
+});
