@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS items (item_id SERIAL PRIMARY KEY, listType VARCHAR(55), item VARCHAR (255),amount VARCHAR (55));
 
-CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, household INTEGER, heat BOOLEAN, snow BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
+CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, name VARCHAR(55), household INTEGER, base BOOLEAN, heat BOOLEAN, snow BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
 
 CREATE TABLE IF NOT EXISTS items_by_user (user_id INTEGER REFERENCES users, item_id INTEGER REFERENCES items, added_on DATE);
 
@@ -19,7 +19,7 @@ CREATE TABLE articles_by_categories (
 
 
 INSERT INTO items (listType, item, amount) VALUES ('base', 'flashlight', 'per-person');
-INSERT INTO items (listType, item, amount) VALUES ('base', 'food', 'per-person');
+INSERT INTO items (listType, item, amount) VALUES ('base', 'food', 'per-day');
 INSERT INTO items (listType, item, amount) VALUES ('base', 'water', 'per-day');
 INSERT INTO items (listType, item, amount) VALUES ('base', 'batteries', 'per-person');
 INSERT INTO items (listType, item, amount) VALUES ('base', 'radio', 'per-houshold');
@@ -64,6 +64,8 @@ INSERT INTO items (listType, item, amount) VALUES ('base', 'can opener', 'per-ho
 INSERT INTO items (listType, item, amount) VALUES ('base', 'books', 'per-person');
 INSERT INTO items (listType, item, amount) VALUES ('child', 'small games', 'per-person');
 INSERT INTO items (listType, item, amount) VALUES ('child', 'child hygiene items', 'per-person');
-INSERT INTO items (listType, item, amount) VALUES ('child', 'playing cards', 'per-person');
+INSERT INTO items (listType, item, amount) VALUES ('base', 'playing cards', 'per-person');
 INSERT INTO items (listType, item, amount) VALUES ('base', 'paper and pencils', 'per-household');
 INSERT INTO items (listType, item, amount) VALUES ('base', 'local maps', 'per-household');
+INSERT INTO items (listType, item, amount) VALUES ('base', 'bags for human waste', 'per-person');
+INSERT INTO items (listType, item, amount) VALUES ('base', 'trash can for human waste bags', 'per-person');
