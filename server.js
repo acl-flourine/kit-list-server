@@ -24,17 +24,14 @@ app.get('/api/v1/kitlist', (req, res) => {
     console.log('test');
 });
 
-app.get('/monkeys', (req, res) => {
-    res.send('got moneky')
-})
 
 app.post('/api/v1/user', (req, res) => {
     console.log(req.body.types);
     console.log(req.body.days);
     client.query(
         `INSERT INTO
-    users(name, household, numberdays, heat, snow, infant, child, meds, pets)
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
+    users(name, household, numberdays, heat, snow, infant, child, meds, pets, base)
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
         [
             req.body.name,
             req.body.household,
@@ -44,13 +41,15 @@ app.post('/api/v1/user', (req, res) => {
             req.body.types.includes('infant'),
             req.body.types.includes('child'),
             req.body.types.includes('meds'),
-            req.body.types.includes('pets')
+            req.body.types.includes('pets'),
+            true
         ]
     );
+    res.status(200).send('Success');
 });
 
 app.post('/api/v1/kitlist/:user_id', (req, res) => {
-    const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets'];
+    const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets', 'base'];
     console.log(req.params);
     let itemIds = null;
     itemTypes.forEach(function(ele) {
@@ -63,21 +62,23 @@ app.post('/api/v1/kitlist/:user_id', (req, res) => {
                         console.log(element);
                     });
                 }).catch(err => console.log(err));
-
         }
     });
     res.status(200).send('Success' + 'username=' + req.params);
 });
-// *******************REFERENCE THIS FOR JOIN TABLE**********************************
-// app.get('/articles', (request, response) => {
-//     client.query(`
-//     SELECT * FROM articles
-//     INNER JOIN authors
-//       ON articles.author_id=authors.author_id;`
-//     )
-//         .then(result => response.send(result.rows))
-//         .catch(console.error);
-// });
+
+
+app.get('/api/v1/kitlist/:user_id', (req, res) => {
+    client.query(`SELECT items.item, items.amount, items_by_user.added_on
+        FROM items
+        INNER JOIN items_by_user ON items.item_id = items_by_user.item_id
+        WHERE items_by_user.user_id = $1;`,
+        [req.params.user_id])
+        .then(data => {
+            res.send(data.rows);
+            console.log(data);})
+        .catch(console.error);
+});
 
 
 app.listen(PORT, () => {
