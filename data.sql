@@ -2,6 +2,19 @@ CREATE TABLE IF NOT EXISTS items (item_id SERIAL PRIMARY KEY, listType VARCHAR(5
 
 CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, household INTEGER, heat BOOLEAN, snow BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
 
+CREATE TABLE IF NOT EXISTS items_by_user (user_id INTEGER REFERENCES users, item_id INTEGER REFERENCES items, added_on DATE);
+
+
+
+
+
+
+CREATE TABLE articles_by_categories (
+    article_id INTEGER REFERENCES articles,
+    category_id INTEGER REFERENCES categories
+);
+
+
 
 
 
