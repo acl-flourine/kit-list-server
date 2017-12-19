@@ -16,15 +16,6 @@ const PORT = process.env.PORT;
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-// app.get('/api/v1/kitlist', (req, res) => {
-//     client.query(`SELECT * FROM items;`)
-//         .then(data => res.send(data.rows));
-//     console.log('test');
-// });
-
-
 app.post('/api/v1/kitlist', (req, res) => {
     console.log(req.body.types);
     console.log(req.body.days);
@@ -61,13 +52,15 @@ app.post('/api/v1/kitlist', (req, res) => {
                         }).catch(err => console.log(err));
                 }
             });
-            res.status(200).send('Success' + 'username=' + req.params);
+            res.status(200).send(currentId.toString());
         })
-        .catch(err => console.log(err));
-    res.status(200).send('Success');
+        .catch ((err) => {
+            console.log('Error on insert:', err);
+            res.sendStatus(500).send(err);
+        });
 });
 
-app.get('/api/v1/kitlist/:user_id', (req, res) => {
+app.get('/api/v1/kitlist/:user_id', (req, res) => { // this should be used to get items for a new user OR and existing user, corresponds to Item.fetchAll
     client.query(`SELECT items.item, items.amount, items_by_user.added_on
         FROM items
         INNER JOIN items_by_user ON items.item_id = items_by_user.item_id
@@ -78,6 +71,8 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
             console.log(data);})
         .catch(console.error);
 });
+
+// the following is probably not necessary - use the above for both new and existing users. BUT we do need to get the user_id that corresponds to the username inputted
 app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
     client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
         .then(data => {
