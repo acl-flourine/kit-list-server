@@ -53,17 +53,11 @@ app.post('/api/v1/kitlist/:user_id', (req, res) => {
     const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets'];
     console.log(req.params);
     let itemIds = null;
-
     itemTypes.forEach(function(ele) {
-        const queryString = `SELECT ${ele} FROM users WHERE users.user_id = ${req.params.user_id};`;
-        console.log(queryString);
-        console.log(typeof ele);
-        if (client.query (queryString)) { // add array request.body something; to access user id
-            console.log('we got');
-            client.query(`SELECT item_id FROM items WHERE listType=${ele};`)
+        if (client.query (`SELECT $1 FROM users WHERE users.user_id = $2;`, [ele, req.params.user_id])) {
+            client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
                 .then(got => {
-                    console.log('++++++++++++++++====++we have: ' + got);
-                    itemIds = got;
+                    itemIds = got.rows.map(item => item.item_id);
                     itemIds.forEach(function(element) {
                         client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES (${req.params.user_id}, ${element});`);
                         console.log(element);
