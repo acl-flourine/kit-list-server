@@ -18,8 +18,9 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.post('/api/v1/kitlist', (req, res) => {
-    console.log(req.body.types);
+    console.log(req.body);
     console.log(req.body.days);
+    console.log(req.body.userState);
     client.query(
         `INSERT INTO
     users(name, household, numberdays, heat, cold, infant, child, meds, pets, base, userState, userCity)
@@ -80,6 +81,7 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
             res.send(data.rows);
         //     console.log(data);})
         // .catch(console.error);
+        });
 });
 
 app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
@@ -98,25 +100,27 @@ app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send databas
 // 5. Usage of data will be done asynchronously
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////*********WEATHER***********////////////////////////////////////////////////
+
 app.get('/api/v1/weather', (req, res) => {
-    const locationString = 'OR/Portland';
+    const locationString = 'WA/Olympia';
     const apiURL = 'http://api.wunderground.com/api/';
     const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
 
-    // console.log(apiTest);
+    console.log(apiTest);
 
     superAgent
-
         .get(apiTest)
         .end((err, resp) => {
-            // console.log(resp.body);
-
+            const temp = resp.body.current_observation.temp_f;
+            console.log(resp.body.current_observation.wind_string);
+            console.log(resp.body.current_observation.weather);
+            console.log(resp.body.current_observation.forecast_url);
+            console.log(resp.body.current_observation.image.url);
             // GOAL: return weatherInfo object that contains location, temp, weahter
-
-            res.send('response sent!'); // make a new object with location, temp, weather
-
-        }
-        );
+            res.send(temp); // failing to send response info back to client side
+        });
 });
 
 
