@@ -52,6 +52,7 @@ app.post('/api/v1/kitlist', (req, res) => {
                 };
                 client.query(query)
                     .then( data => {
+                        console.log(data.rows[0][0]);
                         if (data.rows[0][0] === true) {
                             client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
                                 .then(got => {
@@ -79,9 +80,8 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         [req.params.user_id])
         .then(data => {
             res.send(data.rows);
-        //     console.log(data);})
-        // .catch(console.error);
-        });
+            console.log(data);})
+        .catch(console.error);
 });
 
 app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
@@ -103,25 +103,25 @@ app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send databas
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////*********WEATHER***********////////////////////////////////////////////////
 
-app.get('/api/v1/weather', (req, res) => {
-    const locationString = 'WA/Olympia';
-    const apiURL = 'http://api.wunderground.com/api/';
-    const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
+// app.get('/api/v1/weather', (req, res) => {
+//     const locationString = 'WA/Olympia';
+//     const apiURL = 'http://api.wunderground.com/api/';
+//     const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
 
-    console.log(apiTest);
+//     console.log(apiTest);
 
-    superAgent
-        .get(apiTest)
-        .end((err, resp) => {
-            const temp = resp.body.current_observation.temp_f;
-            console.log(resp.body.current_observation.wind_string);
-            console.log(resp.body.current_observation.weather);
-            console.log(resp.body.current_observation.forecast_url);
-            console.log(resp.body.current_observation.image.url);
-            // GOAL: return weatherInfo object that contains location, temp, weahter
-            res.send(temp); // failing to send response info back to client side
-        });
-});
+//     superAgent
+//         .get(apiTest)
+//         .end((err, resp) => {
+//             const temp = resp.body.current_observation.temp_f;
+//             console.log(resp.body.current_observation.wind_string);
+//             console.log(resp.body.current_observation.weather);
+//             console.log(resp.body.current_observation.forecast_url);
+//             console.log(resp.body.current_observation.image.url);
+//             // GOAL: return weatherInfo object that contains location, temp, weahter
+//             res.send(temp); // failing to send response info back to client side
+//         });
+// });
 
 
 app.listen(PORT, () => {
