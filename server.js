@@ -4,7 +4,7 @@ const app = express();
 const pg = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// const superAgent = require('superagent');
+const superAgent = require('superagent');
 
 app.use(express.static('/'));
 app.use(bodyParser.json());
@@ -12,17 +12,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 const PORT = process.env.PORT;
+const API_KEY = process.env.API_KEY;
 
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-// app.get('/api/v1/kitlist', (req, res) => {
-//     client.query(`SELECT * FROM items;`)
-//         .then(data => res.send(data.rows));
-//     console.log('test');
-// });
+app.get('/api/v1/kitlist', (req, res) => {
+    client.query(`SELECT * FROM items;`)
+        .then(data => res.send(data.rows));
+    console.log('test');
+});
 
 
 app.post('/api/v1/kitlist', (req, res) => {
@@ -78,11 +79,43 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
             console.log(data);})
         .catch(console.error);
 });
+
 app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
     client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
         .then(data => {
             res.send(data.rows); // <<< decide where to put data
         });
+});
+
+
+// Steps for adding the API
+// 1. Put HTML element on page
+// 2. Call  API (server.js), should be inside a named function
+// 3. With data from API, populate HTML element (using Handlebars)
+// 4. Make a template for handlebars to use (index.html)
+// 5. Usage of data will be done asynchronously
+
+
+app.get('/api/v1/weather', (req, res) => {
+    const locationString = 'OR/Portland';
+    const apiURL = 'http://api.wunderground.com/api/';
+    const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
+
+    console.log(apiTest);
+
+    superAgent
+
+        .get(apiTest)
+        .end((err, resp) => {
+            console.log('hello');
+            console.log(resp.body);
+
+            // GOAL: return weatherInfo object that contains location, temp, weahter
+
+            res.send('response sent!'); // make a new object with location, temp, weather
+
+        }
+        );
 });
 
 
