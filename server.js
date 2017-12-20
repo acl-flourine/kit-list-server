@@ -18,10 +18,11 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.post('/api/v1/kitlist', (req, res) => {
+
     client.query(
         `INSERT INTO
-    users(name, household, numberdays, heat, cold, infant, child, meds, pets, base)
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING user_id;`,
+    users(name, household, numberdays, heat, cold, infant, child, meds, pets, base, userState, userCity)
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING user_id;`,
         [
             req.body.name,
             req.body.household,
@@ -32,7 +33,9 @@ app.post('/api/v1/kitlist', (req, res) => {
             req.body.types.includes('child'),
             req.body.types.includes('meds'),
             req.body.types.includes('pets'),
-            true
+            true,
+            req.body.userState,
+            req.body.userCity
         ]
     )
         .then(function (result){
@@ -47,12 +50,10 @@ app.post('/api/v1/kitlist', (req, res) => {
                 };
                 client.query(query)
                     .then( data => {
-                        console.log('********DATA: ', data.rows[0][0]);
                         if (data.rows[0][0] === true) {
                             client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
                                 .then(got => {
                                     itemIds = got.rows.map(item => item.item_id);
-                                    console.log('**********Item ids for user: ',itemIds);
                                     itemIds.forEach(function(element) {
                                         client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES (${currentId}, ${element});`)
                                             .catch(err => console.log(err));
@@ -64,7 +65,6 @@ app.post('/api/v1/kitlist', (req, res) => {
             res.status(200).send(currentId.toString());
         })
         .catch ((err) => {
-            console.log('Error on insert:', err);
             res.sendStatus(500).send(err);
         });
 });
@@ -77,8 +77,9 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         [req.params.user_id])
         .then(data => {
             res.send(data.rows);
-            console.log(data);})
-        .catch(console.error);
+        //     console.log(data);})
+        // .catch(console.error);
+        });
 });
 
 app.get('/api/v1/kitlist/users/:name', (req, res) => {
@@ -97,26 +98,27 @@ app.get('/api/v1/kitlist/users/:name', (req, res) => {
 // 5. Usage of data will be done asynchronously
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////*********WEATHER***********////////////////////////////////////////////////
+
 app.get('/api/v1/weather', (req, res) => {
-    const locationString = 'OR/Portland';
+    const locationString = 'WA/Olympia';
     const apiURL = 'http://api.wunderground.com/api/';
     const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
 
     console.log(apiTest);
 
     superAgent
-
         .get(apiTest)
         .end((err, resp) => {
-            console.log('hello');
-            console.log(resp.body);
-
+            const temp = resp.body.current_observation.temp_f;
+            console.log(resp.body.current_observation.wind_string);
+            console.log(resp.body.current_observation.weather);
+            console.log(resp.body.current_observation.forecast_url);
+            console.log(resp.body.current_observation.image.url);
             // GOAL: return weatherInfo object that contains location, temp, weahter
-
-            res.send('response sent!'); // make a new object with location, temp, weather
-
-        }
-        );
+            res.send(temp); // failing to send response info back to client side
+        });
 });
 
 
