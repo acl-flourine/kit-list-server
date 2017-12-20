@@ -18,9 +18,7 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.post('/api/v1/kitlist', (req, res) => {
-    console.log(req.body);
-    console.log(req.body.days);
-    console.log(req.body.userState);
+
     client.query(
         `INSERT INTO
     users(name, household, numberdays, heat, cold, infant, child, meds, pets, base, userState, userCity)
@@ -42,7 +40,7 @@ app.post('/api/v1/kitlist', (req, res) => {
     )
         .then(function (result){
             const currentId = result.rows[0].user_id;
-            const itemTypes = ['heat', 'cold', 'infant', 'child', 'pets', 'base'];
+            const itemTypes = ['heat', 'cold', 'infant', 'child', 'pets', 'base', 'meds'];
             let itemIds = null;
             itemTypes.forEach(function(ele) {
                 const query = {
@@ -84,10 +82,10 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         });
 });
 
-app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
+app.get('/api/v1/kitlist/users/:name', (req, res) => {
     client.query(`SELECT * FROM users WHERE name = $1;`, [req.params.name])
         .then(data => {
-            res.send(data.rows); // <<< decide where to put data
+            res.send(data.rows);
         });
 });
 
