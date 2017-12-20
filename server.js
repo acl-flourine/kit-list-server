@@ -17,28 +17,19 @@ const API_KEY = process.env.API_KEY;
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-app.get('/api/v1/kitlist', (req, res) => {
-    client.query(`SELECT * FROM items;`)
-        .then(data => res.send(data.rows));
-    console.log('test');
-});
-
-
 app.post('/api/v1/kitlist', (req, res) => {
     console.log(req.body.types);
     console.log(req.body.days);
     client.query(
         `INSERT INTO
-    users(name, household, numberdays, heat, snow, infant, child, meds, pets, base)
+    users(name, household, numberdays, heat, cold, infant, child, meds, pets, base)
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING user_id;`,
         [
             req.body.name,
             req.body.household,
             req.body.days,
             req.body.types.includes('heat'),
-            req.body.types.includes('snow'),
+            req.body.types.includes('cold'),
             req.body.types.includes('infant'),
             req.body.types.includes('child'),
             req.body.types.includes('meds'),
@@ -48,24 +39,36 @@ app.post('/api/v1/kitlist', (req, res) => {
     )
         .then(function (result){
             const currentId = result.rows[0].user_id;
-            const itemTypes = ['heat', 'snow', 'infant', 'child', 'pets', 'base'];
+            const itemTypes = ['heat', 'cold', 'infant', 'child', 'pets', 'base'];
             let itemIds = null;
             itemTypes.forEach(function(ele) {
-                if (client.query (`SELECT $1 FROM users WHERE users.user_id = $2;`, [ele, currentId])) {
-                    client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
-                        .then(got => {
-                            itemIds = got.rows.map(item => item.item_id);
-                            itemIds.forEach(function(element) {
-                                client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES (${currentId}, ${element});`)
-                                    .catch(err => console.log(err));
-                            });
-                        }).catch(err => console.log(err));
-                }
+                const query = {
+                    text: `SELECT ${ele} FROM users WHERE users.user_id = $1;`,
+                    values: [currentId],
+                    rowMode: 'array',
+                };
+                client.query(query)
+                    .then( data => {
+                        console.log('********DATA: ', data.rows[0][0]);
+                        if (data.rows[0][0] === true) {
+                            client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
+                                .then(got => {
+                                    itemIds = got.rows.map(item => item.item_id);
+                                    console.log('**********Item ids for user: ',itemIds);
+                                    itemIds.forEach(function(element) {
+                                        client.query(`INSERT INTO items_by_user(user_id, item_id) VALUES (${currentId}, ${element});`)
+                                            .catch(err => console.log(err));
+                                    });
+                                }).catch(err => console.log(err));
+                        }
+                    });
             });
-            res.status(200).send('Success' + 'username=' + req.params);
+            res.status(200).send(currentId.toString());
         })
-        .catch(err => console.log(err));
-    res.status(200).send('Success');
+        .catch ((err) => {
+            console.log('Error on insert:', err);
+            res.sendStatus(500).send(err);
+        });
 });
 
 app.get('/api/v1/kitlist/:user_id', (req, res) => {
@@ -80,8 +83,8 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         .catch(console.error);
 });
 
-app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
-    client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
+app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
+    client.query(`SELECT * FROM users WHERE name = $1;`, [req.params.name])
         .then(data => {
             res.send(data.rows); // <<< decide where to put data
         });

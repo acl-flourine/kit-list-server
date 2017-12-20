@@ -2,5 +2,5 @@
 
 
 data.sql
-*first create items database in psql.
-* then run the command    sql -U postgres -d items -a -f data.sql
+*first create kitlist database in psql.
+* then run the command    psql -d kitlist -a -f data.sql
