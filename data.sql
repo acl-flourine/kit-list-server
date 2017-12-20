@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS items;
 CREATE TABLE IF NOT EXISTS items (item_id SERIAL PRIMARY KEY, listType VARCHAR(55), item VARCHAR (255),amount VARCHAR (55));
 
 DROP TABLE IF EXISTS users;
-CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, name VARCHAR(55), household INTEGER, base BOOLEAN, heat BOOLEAN, cold BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER);
+CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, name VARCHAR(55), household INTEGER, base BOOLEAN, heat BOOLEAN, cold BOOLEAN, infant BOOLEAN, child BOOLEAN, meds BOOLEAN, pets BOOLEAN, numberdays INTEGER, userState VARCHAR(2), userCity VARCHAR(50);
 
 CREATE TABLE IF NOT EXISTS items_by_user (user_id INTEGER REFERENCES users, item_id INTEGER REFERENCES items, added_on DATE);
 
