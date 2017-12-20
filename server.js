@@ -18,7 +18,9 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.post('/api/v1/kitlist', (req, res) => {
-
+    console.log(req.body);
+    console.log(req.body.days);
+    console.log(req.body.userState);
     client.query(
         `INSERT INTO
     users(name, household, numberdays, heat, cold, infant, child, meds, pets, base, userState, userCity)
@@ -40,7 +42,7 @@ app.post('/api/v1/kitlist', (req, res) => {
     )
         .then(function (result){
             const currentId = result.rows[0].user_id;
-            const itemTypes = ['heat', 'cold', 'infant', 'child', 'pets', 'base', 'meds'];
+            const itemTypes = ['heat', 'cold', 'infant', 'child', 'pets', 'base'];
             let itemIds = null;
             itemTypes.forEach(function(ele) {
                 const query = {
@@ -82,10 +84,10 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         .catch(console.error);
 });
 
-app.get('/api/v1/kitlist/users/:name', (req, res) => {
+app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
     client.query(`SELECT * FROM users WHERE name = $1;`, [req.params.name])
         .then(data => {
-            res.send(data.rows);
+            res.send(data.rows); // <<< decide where to put data
         });
 });
 
@@ -101,25 +103,38 @@ app.get('/api/v1/kitlist/users/:name', (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////*********WEATHER***********////////////////////////////////////////////////
 
-// app.get('/api/v1/weather', (req, res) => {
-//     const locationString = 'WA/Olympia';
-//     const apiURL = 'http://api.wunderground.com/api/';
-//     const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
+app.get('/test', (req, res) => {
+    res.send('test passed');
+});
 
-//     console.log(apiTest);
 
-//     superAgent
-//         .get(apiTest)
-//         .end((err, resp) => {
-//             const temp = resp.body.current_observation.temp_f;
-//             console.log(resp.body.current_observation.wind_string);
-//             console.log(resp.body.current_observation.weather);
-//             console.log(resp.body.current_observation.forecast_url);
-//             console.log(resp.body.current_observation.image.url);
-//             // GOAL: return weatherInfo object that contains location, temp, weahter
-//             res.send(temp); // failing to send response info back to client side
-//         });
-// });
+app.get('/api/v1/weather', (req, res) => {
+    console.log('*******//////////our query*****************: ', req.query.id);
+    client.query(`SELECT "userstate", "usercity" FROM users WHERE user_id = $1`, [req.query.id])
+        .then(data => {
+            console.log(data.rows[0].userstate);
+            const userState = data.rows[0].userstate;
+            console.log(data.rows[0].usercity);
+            const userCity = data.rows[0].usercity;
+            const apiURL = 'http://api.wunderground.com/api/';
+            const apiTest = `${apiURL}${API_KEY}/conditions/q/${userState}/${userCity}.json`;
+
+            console.log(apiTest);
+
+            superAgent
+                .get(apiTest)
+                .end((err, resp) => {
+                    const temp = resp.body.current_observation.temp_f;
+                    const wind = resp.body.current_observation.wind_string;
+                    const weatherStatus = resp.body.current_observation.weather;
+                    const location = resp.body.current_observation.display_location.full;
+                    console.log(resp.body.current_observation.forecast_url);
+                    console.log(resp.body.current_observation.image.url);
+                    // GOAL: return weatherInfo object that contains location, temp, weahter
+                    res.send([location.toString(), temp.toString(), wind.toString(), weatherStatus.toString()]); // failing to send response info back to client side
+                });
+        });
+});
 
 
 app.listen(PORT, () => {
