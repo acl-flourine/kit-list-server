@@ -4,7 +4,7 @@ const app = express();
 const pg = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// const superAgent = require('superagent');
+const superAgent = require('superagent');
 
 app.use(express.static('/'));
 app.use(bodyParser.json());
@@ -12,17 +12,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 const PORT = process.env.PORT;
+const API_KEY = process.env.API_KEY;
 
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-// app.get('/api/v1/kitlist', (req, res) => {
-//     client.query(`SELECT * FROM items;`)
-//         .then(data => res.send(data.rows));
-//     console.log('test');
-// });
+app.get('/api/v1/kitlist', (req, res) => {
+    client.query(`SELECT * FROM items;`)
+        .then(data => res.send(data.rows));
+    console.log('test');
+});
 
 
 app.post('/api/v1/kitlist', (req, res) => {
@@ -78,6 +79,7 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
             console.log(data);})
         .catch(console.error);
 });
+
 app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info to listView.existingUser
     client.query(`SELECT * FROM users WHERE name === $1;`, [req.params.name]) // <<< decide proper form input
         .then(data => {
@@ -86,29 +88,56 @@ app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info
 });
 
 
-app.listen(PORT, () => {
-    console.log(`Server starter on Port ${PORT}`);
-});
-
-// Steps for adding the API 
+// Steps for adding the API
 // 1. Put HTML element on page
 // 2. Call  API (server.js), should be inside a named function
 // 3. With data from API, populate HTML element (using Handlebars)
 // 4. Make a template for handlebars to use (index.html)
-// 5. Usage of data will be done asynchronously 
+// 5. Usage of data will be done asynchronously
 
 
 // Define this as a named function and call in document ready
-function api ()
+// function api ()
 
-jQuery(document).ready(function($) {
-    $.ajax({
-        url : "http://api.wunderground.com/api/42fefcef196f9253/conditions/q/OR/Portland.json",
-        dataType : "jsonp",
-        success : function(parsed_json) {
-            var location = parsed_json['location']['city'];
-            var temp_f = parsed_json['current_observation']['temp_f'];
-            alert("Current temperature in " + location + " is: " + temp_f);
+app.get('/api/v1/weather', (req, res) => {
+    const locationString = 'OR/Portland'
+    const apiURL = 'http://api.wunderground.com/api/';
+    const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
+
+    console.log(apiTest);
+
+    // const apiURL = 'http://api.wunderground.com/api/42fefcef196f9253/conditions/settings/q/query.format';
+
+    superAgent
+
+        .get(apiTest)
+        .end((err, resp) => {
+            console.log('hello');
+            console.log(resp.body);
+            
+
+            // {
+            //     let location = parsed_json['location']['city'],
+            //     let temp_f = parsed_json['current_observation']['temp_f'],
+            //     let weather = parsed_json['current_observation']['weather']
+            // };
+
+            // GOAL: return weatherInfo object that contains location, temp, weahter
+
+            res.send('response sent!'); // make a new object with location, temp, weather
+
+            // $.ajax({
+            //     url : "http://api.wunderground.com/api/42fefcef196f9253/conditions/q/OR/Portland.json",
+            //     dataType : "jsonp",
+            //     success : function(parsed_json) {
+            //         var location = parsed_json['location']['city'];
+            //         var temp_f = parsed_json['current_observation']['temp_f'];
+            //         alert("Current temperature in " + location + " is: " + temp_f);
         }
-    });
+        );
+});
+
+
+app.listen(PORT, () => {
+    console.log(`Server starter on Port ${PORT}`);
 });
