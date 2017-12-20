@@ -80,7 +80,7 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         [req.params.user_id])
         .then(data => {
             res.send(data.rows);
-            console.log(data);})
+            console.log('*******************', data.rows);})
         .catch(console.error);
 });
 
