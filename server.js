@@ -96,17 +96,12 @@ app.get('/api/v1/kitlist/:name', (req, res) => { // how do we send database info
 // 5. Usage of data will be done asynchronously
 
 
-// Define this as a named function and call in document ready
-// function api ()
-
 app.get('/api/v1/weather', (req, res) => {
-    const locationString = 'OR/Portland'
+    const locationString = 'OR/Portland';
     const apiURL = 'http://api.wunderground.com/api/';
     const apiTest = `${apiURL}${API_KEY}/conditions/q/${locationString}.json`;
 
     console.log(apiTest);
-
-    // const apiURL = 'http://api.wunderground.com/api/42fefcef196f9253/conditions/settings/q/query.format';
 
     superAgent
 
@@ -114,25 +109,11 @@ app.get('/api/v1/weather', (req, res) => {
         .end((err, resp) => {
             console.log('hello');
             console.log(resp.body);
-            
-
-            // {
-            //     let location = parsed_json['location']['city'],
-            //     let temp_f = parsed_json['current_observation']['temp_f'],
-            //     let weather = parsed_json['current_observation']['weather']
-            // };
 
             // GOAL: return weatherInfo object that contains location, temp, weahter
 
             res.send('response sent!'); // make a new object with location, temp, weather
 
-            // $.ajax({
-            //     url : "http://api.wunderground.com/api/42fefcef196f9253/conditions/q/OR/Portland.json",
-            //     dataType : "jsonp",
-            //     success : function(parsed_json) {
-            //         var location = parsed_json['location']['city'];
-            //         var temp_f = parsed_json['current_observation']['temp_f'];
-            //         alert("Current temperature in " + location + " is: " + temp_f);
         }
         );
 });
