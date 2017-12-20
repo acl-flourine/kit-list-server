@@ -73,7 +73,7 @@ app.post('/api/v1/kitlist', (req, res) => {
 });
 
 app.get('/api/v1/kitlist/:user_id', (req, res) => {
-    client.query(`SELECT items.item, items.amount, items_by_user.added_on
+    client.query(`SELECT items.item, items.amount, items.category, items_by_user.added_on
         FROM items
         INNER JOIN items_by_user ON items.item_id = items_by_user.item_id
         WHERE items_by_user.user_id = $1;`,
