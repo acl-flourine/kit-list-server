@@ -18,9 +18,6 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 
 app.post('/api/v1/kitlist', (req, res) => {
-    console.log(req.body);
-    console.log(req.body.days);
-    console.log(req.body.userState);
     client.query(
         `INSERT INTO
     users(name, household, numberdays, heat, cold, infant, child, meds, pets, base, userState, userCity)
@@ -52,7 +49,6 @@ app.post('/api/v1/kitlist', (req, res) => {
                 };
                 client.query(query)
                     .then( data => {
-                        console.log(data.rows[0][0]);
                         if (data.rows[0][0] === true) {
                             client.query(`SELECT item_id FROM items WHERE listtype = $1;`, [ele])
                                 .then(got => {
@@ -80,46 +76,28 @@ app.get('/api/v1/kitlist/:user_id', (req, res) => {
         [req.params.user_id])
         .then(data => {
             res.send(data.rows);
-            console.log(data);})
+        })
         .catch(console.error);
 });
 
-app.get('/api/v1/kitlist/users/:name', (req, res) => { // how do we send database info to listView.existingUser
+app.get('/api/v1/kitlist/users/:name', (req, res) => {
     client.query(`SELECT * FROM users WHERE name = $1;`, [req.params.name])
         .then(data => {
-            res.send(data.rows); // <<< decide where to put data
+            res.send(data.rows);
         });
 });
-
-
-// Steps for adding the API
-// 1. Put HTML element on page
-// 2. Call  API (server.js), should be inside a named function
-// 3. With data from API, populate HTML element (using Handlebars)
-// 4. Make a template for handlebars to use (index.html)
-// 5. Usage of data will be done asynchronously
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////*********WEATHER***********////////////////////////////////////////////////
 
 app.get('/test', (req, res) => {
     res.send('test passed');
 });
 
-
 app.get('/api/v1/weather', (req, res) => {
-    console.log('*******//////////our query*****************: ', req.query.id);
     client.query(`SELECT "userstate", "usercity" FROM users WHERE user_id = $1`, [req.query.id])
         .then(data => {
-            console.log(data.rows[0].userstate);
             const userState = data.rows[0].userstate;
-            console.log(data.rows[0].usercity);
             const userCity = data.rows[0].usercity;
             const apiURL = 'http://api.wunderground.com/api/';
             const apiTest = `${apiURL}${API_KEY}/conditions/q/${userState}/${userCity}.json`;
-
-            console.log(apiTest);
 
             superAgent
                 .get(apiTest)
@@ -128,15 +106,9 @@ app.get('/api/v1/weather', (req, res) => {
                     const wind = resp.body.current_observation.wind_string;
                     const weatherStatus = resp.body.current_observation.weather;
                     const location = resp.body.current_observation.display_location.full;
-                    console.log(resp.body.current_observation.forecast_url);
-                    console.log(resp.body.current_observation.image.url);
-                    // GOAL: return weatherInfo object that contains location, temp, weahter
                     res.send([location.toString(), temp.toString(), wind.toString(), weatherStatus.toString()]); // failing to send response info back to client side
                 });
         });
 });
 
-
-app.listen(PORT, () => {
-    console.log(`Server starter on Port ${PORT}`);
-});
+app.listen(PORT);
